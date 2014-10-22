@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<!-- <f:event listener="" type="preRenderView" />  -->
+
+		<h:form id="frmInsListagem">
+			<p:dataTable id="tblInstrutores" widgetVar="tabelaInstrutores"
+				emptyMessage="Nenhum registro encontrado."
+				value="#{MBInstrutor.itens}" var="item"
+				filteredValue="#{MBInstrutor.itensFiltrados}" paginator="true"
+				rows="9" style="width:100%">
+
+				<f:facet name="header">
+					Instrutor - Listagem
+				</f:facet>
+
+				<p:column style="width:5px">
+					<!-- Essa tag me permite adicionar a seta para expansão dos campos -->
+					<p:rowToggler />
+				</p:column>
+
+				<!-- Nome -->
+				<p:column headerText="Nome" sortBy="#{item.funcionario.nome}"
+					filterBy="#{item.funcionario.nome}" filterStyle="width:200px"
+					style="width:200px">
+					<h:outputText value="#{item.funcionario.nome}" />
+				</p:column>
+
+				<!-- Data de Nascimento -->
+				<p:column headerText="Data Nasc."
+					sortBy="#{item.funcionario.dataNascimento}"
+					filterBy="#{item.funcionario.dataNascimento}" filterMaxLength="10"
+					style="width:20px">
+					<h:outputText value="#{item.funcionario.dataNascimento}" />
+				</p:column>
+
+				<!-- Gênero -->
+				<p:column headerText="Gênero" filterBy="#{item.funcionario.genero}"
+					filterMaxLength="1" filterStyle="width:20px" style="width:20px">
+					<h:outputText value="#{item.funcionario.genero}" />
+				</p:column>
+
+				<!-- Email -->
+				<p:column headerText="Email" sortBy="#{item.funcionario.email}"
+					filterBy="#{item.funcionario.email}" filterStyle="width:200px"
+					style="width:200px">
+					<h:outputText value="#{item.funcionario.email}" />
+				</p:column>
+
+				<!-- Essa tag me permite implementar a expansão da coluna ao clicar na seta -->
+				<p:rowExpansion>
+					<p:panel header="Documentação e Endereço">
+
+						<p:panelGrid>
+							<p:row>
+								<!-- RG -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>RG: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.rg}" />
+								</p:column>
+
+								<!-- CPF -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>CPF: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.cpf}" />
+								</p:column>
+
+								<!-- Rua -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Rua: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.endereco.rua}" />
+								</p:column>
+
+								<!-- Número -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Número: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.endereco.numero}" />
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<!-- Bairro -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Bairro: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.endereco.bairro}" />
+								</p:column>
+
+								<!-- CEP -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>CEP: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.endereco.cep}" />
+								</p:column>
+
+								<!-- Cidade -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Cidade: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.endereco.cidade}" />
+								</p:column>
+
+								<!-- UF -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>UF: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.endereco.uf}" />
+								</p:column>
+
+							</p:row>
+
+							<p:row>
+
+								<!-- CREF -->
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>CREF: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.funcionario.cref}" />
+								</p:column>
+
+							</p:row>
+
+						</p:panelGrid>
+					</p:panel>
+
+					<br />
+
+<!-- 					<p:panel header="Telefones">
+						<p:outputPanel id="telefones">
+							<p:dataTable id="tblTelefones"
+								emptyMessage="Nenhum registro encontrado."
+								value="#{item.funcionario.telefones}" var="telefone">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="DDD" />
+									</f:facet>
+									<h:outputText value="#{telefone.ddd}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Telefone" />
+									</f:facet>
+									<h:outputText value="#{telefone.numero}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Operadora" />
+									</f:facet>
+									<h:outputText value="#{telefone.operadora}" />
+								</p:column>
+
+							</p:dataTable>
+						</p:outputPanel>
+					</p:panel> -->
+				</p:rowExpansion>
+
+				<p:column headerText="Opções" style="width:80px">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgInsExcluir').show();"
+						update=":frmInsExcluir:pnlInsExcluir">
+						<f:setPropertyActionListener target="#{MBInstrutor.instrutor}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgInsEditar').show();"
+						update=":frmInsEditar:pnlInsEditar">
+						<f:setPropertyActionListener target="#{MBInstrutor.instrutor}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-contact"
+						oncomplete="PF('dlgInsAddFones').show();"
+						update=":frmInsAddFones:pnlInsAddFones :frmInsAddFones:tblTelefonesAddFones">
+						<f:setPropertyActionListener target="#{MBInstrutor.instrutor}"
+							value="#{item}" />
+					</p:commandButton>
+
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBInstrutor.prepararNovo}"
+						update=":frmInsNovo:pnlInsNovo"
+						oncomplete="PF('dlgInsNovo').show();" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgInsNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Instrutor - Novo">
+			<h:form id="frmInsNovo">
+				<h:panelGrid id="pnlInsNovo" columns="4">
+					<p:outputLabel for="txtNomeInsNovo" value="Nome:" />
+					<p:inputText id="txtNomeInsNovo" size="30" maxlength="50"
+						value="#{MBInstrutor.instrutor.funcionario.nome}" required="true"
+						requiredMessage="O campo nome é obrigatório" />
+
+					<p:outputLabel for="txtDataNascInsNovo" value="Data Nasc.:"
+						style="float:right" />
+					<p:inputMask id="txtDataNascInsNovo"
+						value="#{MBInstrutor.instrutor.funcionario.dataNascimento}"
+						mask="99/99/9999" required="true"
+						requiredMessage="O campo data de nascimento é obrigatório" />
+
+					<p:outputLabel value="Gênero:" />
+					<p:selectOneMenu
+						value="#{MBInstrutor.instrutor.funcionario.genero}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="Masculino" itemValue="M" />
+						<f:selectItem itemLabel="Feminino" itemValue="F" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Email:" style="float:right" />
+					<p:inputText size="30" maxlength="35"
+						value="#{MBInstrutor.instrutor.funcionario.email}" />
+
+					<p:outputLabel value="RG:" />
+					<p:inputText size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.rg}" />
+
+					<p:outputLabel for="txtCpfInsNovo" value="CPF:" style="float:right" />
+					<p:inputText id="txtCpfInsNovo" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.cpf}" required="true"
+						requiredMessage="O campo CPF é obrigatório" />
+
+					<p:outputLabel for="txtRuaInsNovo" value="Rua:" />
+					<p:inputText id="txtRuaInsNovo" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.rua}"
+						required="true" requiredMessage="O campo rua é obrigatório" />
+
+					<p:outputLabel for="txtNumeroInsNovo" value="Número:"
+						style="float:right" />
+					<p:inputText id="txtNumeroInsNovo" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.numero}"
+						required="true" requiredMessage="O campo número é obrigatório" />
+
+					<p:outputLabel for="txtBairroInsNovo" value="Bairro:" />
+					<p:inputText id="txtBairroInsNovo" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.bairro}"
+						required="true" requiredMessage="O campo bairro é obrigatório" />
+
+					<p:outputLabel for="txtCepInsNovo" value="CEP:" style="float:right" />
+					<p:inputMask id="txtCepInsNovo"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.cep}"
+						mask="99999-999" required="true"
+						requiredMessage="O campo CEP é obrigatório" />
+
+					<p:outputLabel for="txtCidadeInsNovo" value="Cidade:" />
+					<p:inputText id="txtCidadeInsNovo" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.cidade}"
+						required="true" requiredMessage="O campo cidade é obrigatório" />
+
+					<p:outputLabel value="UF:" style="float:right" />
+					<p:selectOneMenu
+						value="#{MBInstrutor.instrutor.funcionario.endereco.uf}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="Paraná" itemValue="PR" />
+						<f:selectItem itemLabel="São Paulo" itemValue="SP" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="txtCrefInsNovo" value="CREF:"
+						style="float:right" />
+					<p:inputText id="txtCrefInsNovo" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.cref}" required="true"
+						requiredMessage="O campo CREF é obrigatório" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Gravar"
+						actionListener="#{MBInstrutor.novo}"
+						oncomplete="verificar(xhr, status, args, 'dlgInsNovo', 'tabelaInstrutores');"
+						update=":frmInsListagem:tblInstrutores :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgInsNovo').hide();">
+						<p:resetInput target="pnlInsNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgInsExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Instrutor - Excluir">
+			<h:form id="frmInsExcluir">
+				<p:panelGrid id="pnlInsExcluir" columns="2">
+					<h:outputLabel value="Deseja realmente excluir o instrutor: " />
+					<h:outputText value="#{MBInstrutor.instrutor.funcionario.nome}" />
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBInstrutor.excluir}"
+						oncomplete="PF('dlgInsExcluir').hide(); tabelaInstrutores.clearFilters();"
+						update=":frmInsListagem:tblInstrutores :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgInsExcluir').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgInsEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Instrutor - Editar">
+			<h:form id="frmInsEditar">
+				<p:panelGrid id="pnlInsEditar" columns="4">
+					<p:outputLabel for="txtNomeInsEditar" value="Nome:" />
+					<p:inputText id="txtNomeInsEditar" size="30" maxlength="50"
+						value="#{MBInstrutor.instrutor.funcionario.nome}" required="true"
+						requiredMessage="O campo nome é obrigatório" />
+
+					<p:outputLabel for="txtDataNascInsEditar" value="Data Nasc.:"
+						style="float:right" />
+					<p:inputMask id="txtDataNascInsEditar"
+						value="#{MBInstrutor.instrutor.funcionario.dataNascimento}"
+						mask="99/99/9999" required="true"
+						requiredMessage="O campo data de nascimento é obrigatório" />
+
+					<p:outputLabel value="Gênero:" />
+					<p:selectOneMenu
+						value="#{MBInstrutor.instrutor.funcionario.genero}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="Masculino" itemValue="M" />
+						<f:selectItem itemLabel="Feminino" itemValue="F" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Email:" style="float:right" />
+					<p:inputText size="30" maxlength="35"
+						value="#{MBInstrutor.instrutor.funcionario.email}" />
+
+					<p:outputLabel value="RG:" />
+					<p:inputText size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.rg}" />
+
+					<p:outputLabel for="txtCpfInsEditar" value="CPF:"
+						style="float:right" />
+					<p:inputText id="txtCpfInsEditar" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.cpf}" required="true"
+						requiredMessage="O campo CPF é obrigatório" />
+
+					<p:outputLabel for="txtRuaInsEditar" value="Rua:" />
+					<p:inputText id="txtRuaInsEditar" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.rua}"
+						required="true" requiredMessage="O campo rua é obrigatório" />
+
+					<p:outputLabel for="txtNumeroInsEditar" value="Número:"
+						style="float:right" />
+					<p:inputText id="txtNumeroInsEditar" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.numero}"
+						required="true" requiredMessage="O campo número é obrigatório" />
+
+					<p:outputLabel for="txtBairroInsEditar" value="Bairro:" />
+					<p:inputText id="txtBairroInsEditar" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.bairro}"
+						required="true" requiredMessage="O campo bairro é obrigatório" />
+
+					<p:outputLabel for="txtCepInsEditar" value="CEP:"
+						style="float:right" />
+					<p:inputMask id="txtCepInsEditar"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.cep}"
+						mask="99999-999" required="true"
+						requiredMessage="O campo CEP é obrigatório" />
+
+					<p:outputLabel for="txtCidadeInsEditar" value="Cidade:" />
+					<p:inputText id="txtCidadeInsEditar" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.endereco.cidade}"
+						required="true" requiredMessage="O campo cidade é obrigatório" />
+
+					<p:outputLabel value="UF:" style="float:right" />
+					<p:selectOneMenu
+						value="#{MBInstrutor.instrutor.funcionario.endereco.uf}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="Paraná" itemValue="PR" />
+						<f:selectItem itemLabel="São Paulo" itemValue="SP" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="txtCrefInsEditar" value="CREF:"
+						style="float:right" />
+					<p:inputText id="txtCrefInsEditar" size="30" maxlength="30"
+						value="#{MBInstrutor.instrutor.funcionario.cref}" required="true"
+						requiredMessage="O campo CREF é obrigatório" />
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBInstrutor.editar}"
+						oncomplete="verificar(xhr, status, args, 'dlgInsEditar', 'tabelaInstrutores');"
+						update=":frmInsListagem:tblInstrutores :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgInsEditar').hide();">
+						<p:resetInput target="pnlInsEditar" />
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<!-- DIÁLOGO PARA ADICIONAR TELEFONES -->
+		<p:dialog widgetVar="dlgInsAddFones" closable="true" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Instrutor - Adicionar Telefones">
+			<h:form id="frmInsAddFones">
+
+				<h:panelGrid columns="2" id="pnlInsAddFones">
+					<h:outputLabel value="DDD:" />
+					<p:inputText value="#{MBInstrutor.telefone.ddd}" />
+
+					<h:outputLabel value="Número:" for="txtNumero" />
+					<p:inputText id="txtNumero" value="#{MBInstrutor.telefone.numero}"
+						required="true" requiredMessage="O campo número é obrigatório" />
+
+					<h:outputLabel value="Operadora: " />
+					<p:inputText value="#{MBInstrutor.telefone.operadora}" />
+
+					<p:commandButton value="Limpar" type="reset" />
+					<p:commandButton id="btnAdd" value="Adicionar"
+						action="#{MBInstrutor.adicionarTelefone}"
+						update=":msgGlobal tblTelefonesAddFones @parent">
+					</p:commandButton>
+				</h:panelGrid>
+
+				<p:dataTable id="tblTelefonesAddFones"
+					value="#{MBInstrutor.instrutor.funcionario.telefones}"
+					var="telefone" emptyMessage="Nenhum Telefone Adicionado">
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="DDD" />
+						</f:facet>
+						<h:outputText value="#{telefone.ddd}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Número" />
+						</f:facet>
+						<h:outputText value="#{telefone.numero}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Operadora" />
+						</f:facet>
+						<h:outputText value="#{telefone.operadora}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Remover" />
+						</f:facet>
+						<p:commandButton icon="ui-icon-circle-close"
+							action="#{MBInstrutor.removerTelefone(telefone)}"
+							update=":frmInsAddFones:tblTelefonesAddFones :msgGlobal"
+							process="@this">
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+
+				<h:panelGrid columns="2" id="pnlGravarTelefones">
+					<p:commandButton value="Gravar Telefones"
+						actionListener="#{MBInstrutor.gravarTelefones}"
+						oncomplete="PF('dlgInsAddFones').hide();" update=":msgGlobal"
+						process="@this" />
+					<p:commandButton value="Cancelar"
+						oncomplete="PF('dlgInsAddFones').hide();" process="@this" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>
+
+<!-- @author Leticia Pereira Borges Alves <leticia_borges.alves@hotmail.com> -->

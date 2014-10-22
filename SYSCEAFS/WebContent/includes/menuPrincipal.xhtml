@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form>
+		<p:accordionPanel style="width:200px" activeIndex="none">
+			<p:tab title="CADASTROS GERAIS">
+
+				<p:commandButton value="Supervisores" style="width:140px"
+					action="/pages/supervisor.xhtml?faces-redirect=true" />
+				<p:commandButton value="Instrutores" style="width:140px"
+					action="/pages/instrutor.xhtml?faces-redirect=true" />
+				<p:commandButton value="Equipamentos" style="width:140px"
+					action="/pages/equipamento.xhtml?faces-redirect=true" />
+				<p:commandButton value="Exercícios" style="width:140px"
+					action="/pages/exercicio.xhtml?faces-redirect=true" />
+				<p:commandButton value="Alunos" style="width:140px"
+					action="/pages/aluno.xhtml?faces-redirect=true" />
+				<p:commandButton value="Patologias" style="width:140px"
+					action="/pages/patologia.xhtml?faces-redirect=true" />
+				<p:commandButton value="Acompanhamento Médico" style="width:140px"
+					action="/pages/acompanhamento_medico.xhtml?faces-redirect=true" />
+
+			</p:tab>
+
+			<p:tab title="TREINOS">
+				<p:commandButton value="Planos de Treino" style="width:140px"
+					action="/pages/atividade.xhtml?faces-redirect=true" />
+				<p:commandButton value="Acompanhamentos de Treino"
+					style="width:140px" action="/pages/aula.xhtml?faces-redirect=true" />
+			</p:tab>
+
+			<p:tab title="RELATÓRIOS">
+				<p:commandButton value="Acompanhar Treino" style="width:140px"
+					action="/pages/acompanhamento_treino.xhtml?faces-redirect=true" />
+				<p:commandButton value="Evolução do Aluno" style="width:140px"
+					action="/pages/evolucao_aluno.xhtml?faces-redirect=true" />
+			</p:tab>
+
+			<p:tab title="AJUDA">
+				<p:commandButton value="Sobre" style="width:140px"
+					action="/pages/sobre.xhtml?faces-redirect=true" />
+			</p:tab>
+		</p:accordionPanel>
+
+		<!--  <p:panelMenu style="width:180px">
+
+			<p:submenu label="Cadastros Gerais" icon="ui-icon-home">
+				<p:menuitem value="Cadastro de Supervisores" />
+				<p:menuitem value="Cadastro de Instrutores" />
+				<p:menuitem value="Cadastro de Equipamentos" />
+				<p:menuitem value="Cadastro de Exercícios" />
+				<p:menuitem value="Cadastro de Alunos" />
+				<p:menuitem value="Cadastro de Patologias"
+					outcome="/pages/patologia.xhtml" />
+				<p:menuitem value="Acompanhamento Médico dos Alunos" />
+			</p:submenu>
+
+			<p:submenu label="Treinos">
+				<p:menuitem value="Planos de Treino" />
+				<p:menuitem value="Acompanhar Treino" />
+			</p:submenu>
+
+			<p:submenu label="Relatórios">
+				<p:menuitem value="Acompanhamento de Treinos" />
+				<p:menuitem value="Evolução do Aluno" />
+				<p:menuitem value="Pressão Arterial do Aluno" />
+			</p:submenu>
+
+			<p:submenu label="Ajuda">
+				<p:menuitem value="Sobre" />
+				<p:menuitem value="Manual do Usuário" />
+
+			</p:submenu>
+		</p:panelMenu> -->
+
+	</h:form>
+
+</ui:composition>

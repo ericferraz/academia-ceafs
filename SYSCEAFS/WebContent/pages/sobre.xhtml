@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<div class="ui-messages ui-widget">
+			<div class="ui-messages-info ui-corner-all">
+				<span class="ui-messages-info-icon"></span>
+				<ul>
+					<li><span class="ui-messages-info-summary">Sobre</span> <span
+						class="ui-messages-info-detail">Sistema Desenvolvido por:</span></li>
+				</ul>
+			</div>
+		</div>
+		<center>
+			<h:panelGrid columns="19">
+				<p:column>
+					<p:outputLabel value="Alunos:" style="font-weight: bold; " />
+					<br />
+					<br />
+					<p:outputLabel value="Eric Luiz Ferrás" />
+					<br />
+					<p:outputLabel value="Erika Yuri Makiyama Takase" />
+					<br />
+					<p:outputLabel value="Jairo Antonio dos Santos Junior" />
+					<br />
+					<p:outputLabel value="João Batista Alves Junior" />
+					<br />
+					<p:outputLabel value="Leandro Ulisses dos Passos" />
+					<br />
+					<p:outputLabel value="Leticia Pereira Borges Alves" />
+					<br />
+					<p:outputLabel value="Rogério Silveira Moraes" />
+				</p:column>
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column>
+					<p:outputLabel value="Disciplinas: " style="font-weight: bold;" />
+					<br />
+					<br />
+					<p:outputLabel value="Engenharia de Software II" />
+					<br />
+					<p:outputLabel value="Engenharia de Software III" />
+					<br />
+					<p:outputLabel value="Laboratório de Engenharia de Software" />
+					<br />
+					<p:outputLabel value="Linguagem de Programação IV" />
+				</p:column>
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:column>
+					<p:outputLabel value="Professores: " style="font-weight: bold;" />
+					<br />
+					<br />
+					<p:outputLabel value="Silvia Helena de Oliveira Santos" />
+					<br />
+					<p:outputLabel value="Viviane de Fátima Bartholo Potenza" />
+					<br />
+					<p:outputLabel value="Elaine Pasqualini" />
+					<br />
+					<p:outputLabel value="Sérgio Roberto Delfino" />
+					<br />
+				</p:column>
+
+			</h:panelGrid>
+
+
+		</center>
+
+		<br />
+		<br />
+		<br />
+		<h:panelGrid columns="5">
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+			<p:outputLabel value="5º ADS Noturno - Fatec Ourinhos - 2014"
+				style="font-weight: bold; " />
+		</h:panelGrid>
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>
+
+<!-- @author Leticia Pereira Borges Alves <leticia_borges.alves@hotmail.com> -->

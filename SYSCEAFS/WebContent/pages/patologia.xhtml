@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+
+	<ui:define name="conteudo">
+		<h:form id="frmPatListagem">
+			<p:dataTable id="tblPatologias" widgetVar="tabelaPatologias"
+				emptyMessage="Nenhum registro encontrado."
+				value="#{MBPatologia.itens}" var="item"
+				filteredValue="#{MBPatologia.itensFiltrados}" paginator="true"
+				rows="9">
+
+				<f:facet name="header">
+					Patologia - Listagem
+				</f:facet>
+
+				<p:column headerText="Nome" sortBy="#{item.nome}"
+					filterBy="#{item.nome}">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgPatExcluir').show();"
+						update=":frmPatExcluir:pnlPatExcluir">
+						<f:setPropertyActionListener target="#{MBPatologia.patologia}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgPatEditar').show();"
+						update=":frmPatEditar:pnlPatEditar">
+						<f:setPropertyActionListener target="#{MBPatologia.patologia}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBPatologia.prepararNovo}"
+						update=":frmPatNovo:pnlPatNovo"
+						oncomplete="PF('dlgPatNovo').show();" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgPatNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Patologia - Novo">
+			<h:form id="frmPatNovo">
+				<h:panelGrid id="pnlPatNovo" columns="2">
+					<p:outputLabel for="txtNomePatNovo" value="Nome:" />
+					<p:inputText id="txtNomePatNovo" size="30" maxlength="50"
+						value="#{MBPatologia.patologia.nome}" required="true"
+						requiredMessage="O campo nome é obrigatório" />
+
+					<p:outputLabel value="Descrição:" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPatologia.patologia.descricao}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Gravar"
+						actionListener="#{MBPatologia.novo}"
+						oncomplete="verificar(xhr, status, args, 'dlgPatNovo', 'tabelaPatologias');"
+						update=":frmPatListagem:tblPatologias :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgPatNovo').hide();" >
+						<p:resetInput target="pnlPatNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgPatExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Patologia - Excluir">
+			<h:form id="frmPatExcluir">
+				<p:panelGrid id="pnlPatExcluir" columns="2">
+
+					<h:outputLabel value="Deseja realmente excluir a patologia: " />
+					<h:outputText value="#{MBPatologia.patologia.nome}" />
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBPatologia.excluir}"
+						oncomplete="PF('dlgPatExcluir').hide(); tabelaPatologias.clearFilters();"
+						update=":frmPatListagem:tblPatologias :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgPatExcluir').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgPatEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Patologia - Editar">
+			<h:form id="frmPatEditar">
+				<p:panelGrid id="pnlPatEditar" columns="2">
+					<p:outputLabel for="txtNomePatEditar" value="Nome:" />
+					<p:inputText id="txtNomePatEditar" size="30" maxlength="50"
+						value="#{MBPatologia.patologia.nome}" required="true"
+						requiredMessage="O campo nome é obrigatório" />
+
+					<p:outputLabel value="Descrição:" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPatologia.patologia.descricao}" />
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBPatologia.editar}"
+						oncomplete="verificar(xhr, status, args, 'dlgPatEditar', 'tabelaPatologias');"
+						update=":frmPatListagem:tblPatologias :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgPatEditar').hide();" >
+						<p:resetInput target="pnlPatEditar" />
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>

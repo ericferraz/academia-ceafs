@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<f:metadata>
+		<o:viewParam name="id" value="#{MBAula.aula}" />
+		<f:viewAction action="#{MBAula.prepararNovo}" />
+	</f:metadata>
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmAulListagem">
+
+			<p:dataTable id="tblAulas" widgetVar="tabelaAulas"
+				emptyMessage="Nenhum registro encontrado." value="#{MBAula.itens}"
+				var="item" filteredValue="#{MBAula.itensFiltrados}" paginator="true"
+				rows="4">
+
+				<f:facet name="header">
+					Acompanhamento de Treino - Listagem
+				</f:facet>
+
+				<p:column headerText="Aluno"
+					sortBy="#{item.atividade.aluno.pessoa.nome}"
+					filterBy="#{item.atividade.aluno.pessoa.nome}">
+					<h:outputText value="#{item.atividade.aluno.pessoa.nome}" />
+				</p:column>
+
+				<p:column headerText="Data da Aula" sortBy="#{item.dataAula}">
+					<h:outputText value="#{item.dataAula}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Dia da Semana"
+					sortBy="#{item.atividade.diaDaSemana}"
+					filterBy="#{item.atividade.diaDaSemana}">
+					<h:outputText value="#{item.atividade.diaDaSemana}" />
+				</p:column>
+
+				<p:column headerText="Instrutor"
+					sortBy="#{item.instrutor.funcionario.nome}"
+					filterBy="#{item.instrutor.funcionario.nome}">
+					<h:outputText value="#{item.instrutor.funcionario.nome}" />
+				</p:column>
+				
+				<p:column headerText="Pressão Inicial"
+					sortBy="#{item.pressaoInicial}"
+					filterBy="#{item.pressaoInicial}">
+					<h:outputText value="#{item.pressaoInicial}" />
+				</p:column>
+				
+				<p:column headerText="Pressão Final"
+					sortBy="#{item.pressaoFinal}"
+					filterBy="#{item.pressaoInicial}">
+					<h:outputText value="#{item.pressaoInicial}" />
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+		<br />
+		<br />
+		<p:outputLabel value="Cadastrar Acompanhamento de Treino"
+			style="font-weight: bold; font-size: larger !important;" />
+		<br />
+		<br />
+
+		<h:form id="frmWizard">
+
+			<p:wizard id="wizAulas" flowListener="#{MBAula.onFlowProcess}"
+				nextLabel="Avançar" backLabel="Voltar" widgetVar="wizardAulas">
+				<p:tab id="tabInicial" title="Dados Iniciais">
+					<p:panel header="Dados Iniciais">
+
+						<h:messages errorClass="error" />
+
+						<h:panelGrid id="pnlAulNovo" columns="4">
+
+							<p:outputLabel for="instrutorAulNovo"
+								value="Treino acompanhado por:" />
+							<p:selectOneMenu id="instrutorAulNovo"
+								value="#{MBAula.aula.instrutor}" filter="true" required="true"
+								requiredMessage="É obrigatório selecionar um instrutor">
+								<f:selectItem itemValue="" itemLabel="Selecione um instrutor" />
+								<f:selectItems value="#{MBAula.comboInstrutores}" var="item"
+									itemValue="#{item}" itemLabel="#{item.funcionario.nome}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="dtPreenchimentoAulNovo" value="Data da Aula:" />
+							<p:calendar id="dtPreenchimentoAulNovo"
+								value="#{MBAula.aula.dataAula}" mode="popup" showOn="button"
+								required="true"
+								requiredMessage="O campo data de preenchimento é obrigatório"
+								locale="pt" />
+
+							<p:outputLabel for="txtPressaoInicialAulNovo"
+								value="Pressão Inicial:" />
+							<p:inputMask id="txtPressaoInicialAulNovo"
+								value="#{MBAula.aula.pressaoInicial}" mask="999/99" />
+
+
+							<p:outputLabel value="Aluno:" for="atividadeAulNovo" />
+							<p:selectOneMenu converter="atividadeConverter" var="atv"
+								id="atividadeAulNovo" value="#{MBAula.atividade}" filter="true"
+								required="true"
+								requiredMessage="É obrigatório selecionar um aluno:">
+								<f:selectItem itemValue="" itemLabel="Selecione um aluno" />
+								<f:selectItems value="#{MBAula.comboAtividades}" var="item"
+									itemValue="#{item}" itemLabel="#{item.aluno.pessoa.nome}" />
+								<p:column>		#{atv.aluno.pessoa.nome} - #{atv.diaDaSemana}	</p:column>
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tabExercicios" title="Exercícios">
+					<p:panel header="Adicionar Exercícios">
+
+						<h:messages errorClass="error" />
+
+						<h:form id="frmExcAul">
+
+							<h:panelGrid columns="2" id="pnlExcAul">
+
+								<h:outputLabel value="Exercício" />
+								<p:selectOneMenu id="exercicioAulNovo"
+									value="#{MBAula.exercicioAula.atividadeExercicio}"
+									filter="true" required="true"
+									requiredMessage="É obrigatório selecionar um exercício">
+									<f:selectItem itemValue="" itemLabel="Selecione um exercício" />
+									<f:selectItems value="#{MBAula.comboExerciciosAtividade}"
+										var="item" itemValue="#{item}"
+										itemLabel="#{item.exercicio.nome}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="txtCargaDireita" value="Carga Direita:" />
+								<p:inputText id="txtCargaDireita"
+									value="#{MBAula.serie.cargaDireita}" required="true"
+									requiredMessage="É obrigatório preencher a carga direita" />
+
+								<p:outputLabel for="txtCargaEsquerda" value="Carga Esquerda:" />
+								<p:inputText id="txtCargaEsquerda"
+									value="#{MBAula.serie.cargaEsquerda}" required="true"
+									requiredMessage="É obrigatório preencher a carga esquerda" />
+
+								<p:outputLabel value="Tipo da Série" />
+								<p:selectOneMenu value="#{MBAula.serie.descricao}"
+									id="tipoSerieAulNovo" required="true"
+									requiredMessage="É obrigatório selecionar um tipo para a série">
+									<f:selectItem itemLabel="Selecione" itemValue="" />
+									<f:selectItem itemLabel="Série 1" itemValue="Série 1" />
+									<f:selectItem itemLabel="Série 2" itemValue="Série 2" />
+									<f:selectItem itemLabel="Série 3" itemValue="Série 3" />
+									<f:selectItem itemLabel="Série 4" itemValue="Série 4" />
+									<f:selectItem itemLabel="Série 5 - Avaliação" itemValue="Série 5 - Avaliação" />
+								</p:selectOneMenu>
+								
+								<p:commandButton id="btnAdd" value="Adicionar"
+									process="@this exercicioAulNovo txtCargaDireita txtCargaEsquerda tipoSerieAulNovo"
+									actionListener="#{MBAula.adicionarExercicioAula}"
+									update="tblExerciciosAdd pnlExcAul :msgGlobal">
+									<p:resetInput target="pnlExcAul" />
+								</p:commandButton>
+							</h:panelGrid>
+
+							<div class="ui-messages ui-widget">
+								<div class="ui-messages-info ui-corner-all">
+									<span class="ui-messages-info-icon"></span>
+									<ul>
+										<li><span class="ui-messages-info-summary">Atenção!</span>
+											<span class="ui-messages-info-detail">Caso a série não
+												possua carga direita e/ou esquerda, preencha com 0.</span></li>
+									</ul>
+								</div>
+							</div>
+
+							<p:dataTable id="tblExerciciosAdd"
+								value="#{MBAula.aulaExercicios}" var="exercicioAdicionado"
+								emptyMessage="Nenhum Exercício Adicionado">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nome do Exercício" />
+									</f:facet>
+									<h:outputText
+										value="#{exercicioAdicionado.atividadeExercicio.exercicio.nome}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Remover" />
+									</f:facet>
+									<p:commandButton icon="ui-icon-circle-close"
+										action="#{MBAula.removerExercicio(exercicioAdicionado)}"
+										update="tblExerciciosAdd :msgGlobal" process="@this">
+									</p:commandButton>
+
+								</p:column>
+
+							</p:dataTable>
+
+						</h:form>
+
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tabDadosFinais" title="Dados Finais">
+					<p:panel header="Dados Finais">
+
+						<h:messages errorClass="error" />
+
+						<h:panelGrid columns="2">
+
+							<p:outputLabel for="txtPressaoFinalAulNovo"
+								value="Pressão Final:" />
+							<p:inputMask id="txtPressaoFinalAulNovo"
+								value="#{MBAula.aula.pressaoFinal}" mask="999/99" />
+
+							<p:dataTable id="tblExerciciosDadosFinais"
+								value="#{MBAula.aulaExercicios}" var="exercicioAdicionado"
+								emptyMessage="Nenhum Exercício Adicionado">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nome do Exercício" />
+									</f:facet>
+									<h:outputText
+										value="#{exercicioAdicionado.atividadeExercicio.exercicio.nome}" />
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<p:commandButton value="Gravar" actionListener="#{MBAula.novo}"
+								oncomplete="tabelaAulas.clearFilters(); wizardAulas.loadStep(wizardAulas.cfg.steps[0], true)"
+								update=":frmAulListagem:tblAulas :msgGlobal :frmWizard:wizAulas" />
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+			</p:wizard>
+
+
+		</h:form>
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>
+
+<!-- @author Leticia Pereira Borges Alves <leticia_borges.alves@hotmail.com> -->

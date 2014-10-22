@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+
+		<h:form id="frmAcpTreinos">
+
+			<h:panelGrid columns="2" id="pnlAcpTreinos">
+
+				<p:outputLabel value="Aluno:" for="alunoAcpTreinos" />
+				<p:selectOneMenu id="alunoAcpTreinos"
+					value="#{MBAcompanhamentoTreinos.aluno}" filter="true"
+					required="true" requiredMessage="É obrigatório selecionar um aluno">
+					<f:selectItem itemValue="" itemLabel="Selecione um aluno" />
+					<f:selectItems value="#{MBAcompanhamentoTreinos.comboAlunos}"
+						var="item" itemValue="#{item}" itemLabel="#{item.pessoa.nome}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+
+			<div class="ui-messages ui-widget">
+				<div class="ui-messages-info ui-corner-all">
+					<span class="ui-messages-info-icon"></span>
+					<ul>
+						<li><span class="ui-messages-info-summary">Atenção</span> <span
+							class="ui-messages-info-detail">Se nenhuma série aparecer,
+								certifique se o aluno tem algum acompanhamento para o dia de
+								hoje!</span></li>
+					</ul>
+				</div>
+			</div>
+
+			<p:commandButton id="btnSelecionarSeries"
+				value="Acompanhar Exercícios"
+				action="#{MBAcompanhamentoTreinos.selecionarSeriesAluno}"
+				update=":msgGlobal tblExercicios @parent">
+			</p:commandButton>
+
+			<p:dataTable id="tblExercicios"
+				value="#{MBAcompanhamentoTreinos.itens}" var="item"
+				emptyMessage="Nenhum Telefone Adicionado"
+				filteredValue="#{MBAcompanhamentoTreinos.itensFiltrados}"
+				paginator="true" rows="10">
+
+				<p:column
+					sortBy="#{item.aulaExercicio.atividadeExercicio.exercicio.nome}">
+					<f:facet name="header">
+						<h:outputText value="Nome do Exercício" />
+					</f:facet>
+					<h:outputText
+						value="#{item.aulaExercicio.atividadeExercicio.exercicio.nome}" />
+				</p:column>
+
+				<p:column sortBy="#{item.descricao}">
+					<f:facet name="header">
+						<h:outputText value="Tipo da Série" />
+					</f:facet>
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column sortBy="#{item.cargaDireita}">
+					<f:facet name="header">
+						<h:outputText value="Carga Direita" />
+					</f:facet>
+					<h:outputText value="#{item.cargaDireita}" />
+				</p:column>
+
+				<p:column sortBy="#{item.cargaEsquerda}">
+					<f:facet name="header">
+						<h:outputText value="Carga Esquerda" />
+					</f:facet>
+					<h:outputText value="#{item.cargaEsquerda}" />
+				</p:column>
+
+				<p:column exportable="false">
+					<f:facet name="header">
+					</f:facet>
+					<p:selectBooleanCheckbox value="#{item.situacao}">
+						<p:ajax update="tblExercicios" event="valueChange" />
+					</p:selectBooleanCheckbox>
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Situação" />
+					</f:facet>
+					<h:outputText value="#{item.situacao ? 'FEITO' : 'NÃO FEITO'}" />
+				</p:column>
+			</p:dataTable>
+
+
+			<p:outputLabel value="Exportar todos os registros"
+				style="font-weight: bold; font-size: 80% !important; padding: 1cm 1cm 0cm 1cm !important;" />
+
+			<h:commandLink>
+				<p:graphicImage library="images" name="excel.png" />
+				<p:dataExporter type="xls" target="tblExercicios"
+					fileName="planilha_acompanhamento_de_treino"
+					postProcessor="#{MBAtividade.postProcessXLS}" encoding="iso-8859-1" />
+			</h:commandLink>
+
+			<h:commandLink>
+				<p:graphicImage library="images" name="pdf.png" />
+				<p:dataExporter type="pdf" target="tblExercicios"
+					fileName="pdf_acompanhamento_de_treino"
+					preProcessor="#{MBAcompanhamentoTreinos.preProcessPDF}"
+					encoding="iso-8859-1"
+					postProcessor="#{MBAcompanhamentoTreinos.postProcessPDF}" />
+			</h:commandLink>
+
+		</h:form>
+
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>
+
+<!-- @author Leticia Pereira Borges Alves <leticia_borges.alves@hotmail.com> -->

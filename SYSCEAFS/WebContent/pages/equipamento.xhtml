@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="frmEquiListagem">
+			<p:dataTable id="tblEquipamentos" widgetVar="tabelaEquipamentos"
+				emptyMessage="Nenhum registro encontrado."
+				value="#{MBEquipamento.itens}" var="item"
+				filteredValue="#{MBEquipamento.itensFiltrados}" paginator="true"
+				rows="9">
+
+				<f:facet name="header">
+					Equipamento - Listagem
+				</f:facet>
+
+				<p:column style="width:5px">
+					<!-- Essa tag me permite adicionar a seta para expansão dos campos -->
+					<p:rowToggler />
+				</p:column>
+
+				<p:column headerText="Nome" sortBy="#{item.nome}"
+					filterBy="#{item.nome}">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<!-- Essa tag me permite implementar a expansão da coluna ao clicar na seta -->
+				<p:rowExpansion>
+					<p:panel header="Configurações do Equipamento">
+						<p:panelGrid>
+							<p:row>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Altura Mínima: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.configuracao.alturaMinima}" />
+								</p:column>
+
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Altura Máxima: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.configuracao.alturaMaxima}" />
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Amplitude Mínima: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.configuracao.amplitudeMinima}" />
+								</p:column>
+
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Amplitude Máxima: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.configuracao.amplitudeMaxima}" />
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Encosto Mínimo: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.configuracao.encostoMinimo}" />
+								</p:column>
+
+								<p:column style="border-style:none !important;">
+									<p:outputLabel>Encosto Máximo: </p:outputLabel>
+								</p:column>
+								<p:column style="border-style:none !important;">
+									<p:outputLabel value="#{item.configuracao.encostoMaximo}" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+				</p:rowExpansion>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgEquiExcluir').show();"
+						update=":frmEquiExcluir:pnlEquiExcluir">
+						<f:setPropertyActionListener target="#{MBEquipamento.equipamento}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgEquiEditar').show();"
+						update=":frmEquiEditar:pnlEquiEditar">
+						<f:setPropertyActionListener target="#{MBEquipamento.equipamento}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBEquipamento.prepararNovo}"
+						update=":frmEquiNovo:pnlEquiNovo"
+						oncomplete="PF('dlgEquiNovo').show();" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgEquiNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Equipamento - Novo">
+			<h:form id="frmEquiNovo">
+				<h:panelGrid id="pnlEquiNovo" columns="4">
+					<p:outputLabel for="txtNomeEquiNovo" value="Nome:" />
+					<p:inputText id="txtNomeEquiNovo" size="15" maxlength="30"
+						value="#{MBEquipamento.equipamento.nome}" required="true"
+						requiredMessage="O campo nome é obrigatório" />
+					<p:outputLabel />
+					<p:outputLabel />
+					<p:outputLabel value="Altura Mínima:" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.alturaMinima}" />
+					<p:outputLabel value="Altura Máxima:" style="float:right" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.alturaMaxima}" />
+					<p:outputLabel value="Amplitude Mínima:" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.amplitudeMinima}" />
+					<p:outputLabel value="Amplitude Máxima:" style="float:right" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.amplitudeMaxima}" />
+					<p:outputLabel value="Encosto Mínimo:" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.encostoMinimo}" />
+					<p:outputLabel value="Encosto Máximo:" style="float:right" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.encostoMaximo}" />
+				</h:panelGrid>
+				<p:outputLabel
+					value="OBS.: Quando não houver configuração, será atribuído 0 (zero) automaticamente" />
+				<h:panelGrid columns="2">
+					<p:commandButton value="Gravar"
+						actionListener="#{MBEquipamento.novo}"
+						oncomplete="verificar(xhr, status, args, 'dlgEquiNovo', 'tabelaEquipamentos');"
+						update=":frmEquiListagem:tblEquipamentos :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgEquiNovo').hide();" >
+						<p:resetInput target="pnlEquiNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgEquiExcluir" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Equipamento - Excluir">
+			<h:form id="frmEquiExcluir">
+				<p:panelGrid id="pnlEquiExcluir" columns="2">
+					<h:outputLabel value="Deseja realmente excluir o equipamento: " />
+					<h:outputText value="#{MBEquipamento.equipamento.nome}" />
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBEquipamento.excluir}"
+						oncomplete="PF('dlgEquiExcluir').hide(); tabelaEquipamentos.clearFilters();"
+						update=":frmEquiListagem:tblEquipamentos :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgEquiExcluir').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgEquiEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Equipamento - Editar">
+			<h:form id="frmEquiEditar">
+				<p:panelGrid id="pnlEquiEditar" columns="4">
+					<p:outputLabel for="txtNomeEquiEditar" value="Nome:" />
+					<p:inputText id="txtNomeEquiEditar" size="15" maxlength="30"
+						value="#{MBEquipamento.equipamento.nome}" required="true"
+						requiredMessage="O campo nome é obrigatório" />
+					<p:outputLabel />
+					<p:outputLabel />
+					<p:outputLabel value="Altura Mínima:" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.alturaMinima}" />
+					<p:outputLabel value="Altura Máxima:" style="float:right" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.alturaMaxima}" />
+					<p:outputLabel value="Amplitude Mínima:" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.amplitudeMinima}" />
+					<p:outputLabel value="Amplitude Máxima:" style="float:right" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.amplitudeMaxima}" />
+					<p:outputLabel value="Encosto Mínimo:" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.encostoMinimo}" />
+					<p:outputLabel value="Encosto Máximo:" style="float:right" />
+					<p:inputText size="4" maxlength="4"
+						value="#{MBEquipamento.equipamento.configuracao.encostoMaximo}" />
+				</p:panelGrid>
+				<p:outputLabel
+					value="OBS.: Quando não houver configuração, será atribuído 0 (zero) automaticamente" />
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBEquipamento.editar}"
+						oncomplete="verificar(xhr, status, args, 'dlgEquiEditar', 'tabelaEquipamentos');"
+						update=":frmEquiListagem:tblEquipamentos :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgEquiEditar').hide();" >
+						<p:resetInput target="pnlEquiEditar" />
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>

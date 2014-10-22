@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<f:metadata>
+		<o:viewParam name="id" value="#{MBAtividade.atividade}" />
+		<f:viewAction action="#{MBAtividade.prepararNovo}" />
+	</f:metadata>
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmAtvListagem">
+
+			<p:dataTable id="tblAtividades" widgetVar="tabelaAtividades"
+				emptyMessage="Nenhum registro encontrado."
+				value="#{MBAtividade.itens}" var="item"
+				filteredValue="#{MBAtividade.itensFiltrados}" paginator="true"
+				rows="4">
+
+				<f:facet name="header">
+					Planos de Treino - Listagem
+				</f:facet>
+
+				<p:column style="width:5px" exportable="false">
+					<p:commandButton icon="ui-icon-pin-s"
+						oncomplete="PF('dlgAtvExercicios').show();"
+						update=":frmAtvExercicios:pnlAtvExercicios :frmAtvExercicios:tblExercicios">
+						<f:setPropertyActionListener
+							target="#{MBAtividade.atividadeSelecionada}" value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<p:column sortBy="#{item.aluno.pessoa.nome}"
+					filterBy="#{item.aluno.pessoa.nome}">
+					<f:facet name="header">
+						<h:outputText value="Aluno" />
+					</f:facet>
+					<h:outputText value="#{item.aluno.pessoa.nome}" />
+				</p:column>
+
+				<p:column sortBy="#{item.diaDaSemana}"
+					filterBy="#{item.diaDaSemana}">
+					<f:facet name="header">
+						<h:outputText value="Dia da Semana" />
+					</f:facet>
+					<h:outputText value="#{item.diaDaSemana}" />
+				</p:column>
+
+				<p:column sortBy="#{item.hora}" filterBy="#{item.hora}">
+					<f:facet name="header">
+						<h:outputText value="Hora" />
+					</f:facet>
+					<h:outputText value="#{item.hora}">
+						<f:convertDateTime pattern="HH:mm" locale="pt" timeZone="GMT-3" />
+					</h:outputText>
+				</p:column>
+
+				<p:column sortBy="#{item.supervisor.funcionario.nome}"
+					filterBy="#{item.supervisor.funcionario.nome}">
+					<f:facet name="header">
+						<h:outputText value="Supervisor" />
+					</f:facet>
+					<h:outputText value="#{item.supervisor.funcionario.nome}" />
+				</p:column>
+
+				<p:column headerText="Opções" exportable="false">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgAtvExcluir').show();"
+						update=":frmAtvExcluir:pnlAtvExcluir">
+						<f:setPropertyActionListener
+							target="#{MBAtividade.atividadeSelecionada}" value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgAtvEditar').show();"
+						update=":frmAtvEditar:pnlAtvEditar">
+						<f:setPropertyActionListener
+							target="#{MBAtividade.atividadeSelecionada}" value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+			<p:outputLabel value="Exportar todos os registros"
+				style="font-weight: bold; font-size: 80% !important; padding: 1cm 1cm 0cm 1cm !important;" />
+
+			<h:commandLink>
+				<p:graphicImage library="images" name="excel.png" />
+				<p:dataExporter type="xls" target="tblAtividades"
+					fileName="planilha_planos_de_treino"
+					postProcessor="#{MBAtividade.postProcessXLS}" encoding="iso-8859-1" />
+			</h:commandLink>
+
+			<h:commandLink>
+				<p:graphicImage library="images" name="pdf.png" />
+				<p:dataExporter type="pdf" target="tblAtividades"
+					fileName="pdf_planos_de_treino"
+					preProcessor="#{MBAtividade.preProcessPDF}" encoding="iso-8859-1"
+					postProcessor="#{MBAtividade.postProcessPDF}" />
+			</h:commandLink>
+
+			<p:outputLabel value="Exportar apenas os registros filtrados"
+				style="font-weight: bold; font-size: 80% !important; padding: 1cm 1cm 0cm 1cm !important;" />
+
+			<h:commandLink>
+				<p:graphicImage library="images" name="excel.png" />
+				<p:dataExporter type="xls" target="tblAtividades"
+					fileName="planilha_planos_de_treino" pageOnly="true"
+					postProcessor="#{MBAtividade.postProcessXLS}" encoding="iso-8859-1" />
+			</h:commandLink>
+
+			<h:commandLink>
+				<p:graphicImage library="images" name="pdf.png" />
+				<p:dataExporter type="pdf" target="tblAtividades"
+					fileName="pdf_planos_de_treino" pageOnly="true"
+					preProcessor="#{MBAtividade.preProcessPDF}" encoding="iso-8859-1" />
+			</h:commandLink>
+
+		</h:form>
+
+		<br />
+		<br />
+		<p:outputLabel value="Cadastrar Plano de Treino"
+			style="font-weight: bold; font-size: larger !important;" />
+		<br />
+		<br />
+
+		<h:form id="frmWizard">
+
+			<p:wizard id="wizAtividades"
+				flowListener="#{MBAtividade.onFlowProcess}" nextLabel="Avançar"
+				backLabel="Voltar" widgetVar="wizardAtividade">
+				<p:tab id="tabInicial" title="Dados Iniciais">
+					<p:panel header="Dados Iniciais">
+
+						<div class="ui-messages ui-widget">
+							<div class="ui-messages-info ui-corner-all">
+								<span class="ui-messages-info-icon"></span>
+								<ul>
+									<li><span class="ui-messages-info-summary">Recomenda-se</span>
+										<span class="ui-messages-info-detail">Cadastrar um
+											plano de treino para cada dia da semana que o aluno
+											frequenta!</span></li>
+								</ul>
+							</div>
+						</div>
+
+						<h:messages errorClass="error" />
+
+						<h:panelGrid id="pnlAtvNovo" columns="4">
+
+							<p:outputLabel for="supervisorAtvNovo"
+								value="Plano de Treino feito por:" />
+							<p:selectOneMenu id="supervisorAtvNovo"
+								value="#{MBAtividade.atividade.supervisor}" filter="true"
+								required="true"
+								requiredMessage="É obrigatório selecionar um supervisor">
+								<f:selectItem itemValue="" itemLabel="Selecione um supervisor" />
+								<f:selectItems value="#{MBAtividade.comboSupervisores}"
+									var="item" itemValue="#{item}"
+									itemLabel="#{item.funcionario.nome}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Aluno:" for="alunoAtvNovo" />
+							<p:selectOneMenu id="alunoAtvNovo"
+								value="#{MBAtividade.atividade.aluno}" filter="true"
+								required="true"
+								requiredMessage="É obrigatório selecionar um aluno">
+								<f:selectItem itemValue="" itemLabel="Selecione um aluno" />
+								<f:selectItems value="#{MBAtividade.comboAlunos}" var="item"
+									itemValue="#{item}" itemLabel="#{item.pessoa.nome}"
+									itemLabelEscaped="#{item.pessoa.cpf}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Dia da Semana:" for="semanaAtvNovo" />
+							<p:selectOneMenu id="semanaAtvNovo"
+								value="#{MBAtividade.atividade.diaDaSemana}" filter="true"
+								required="true"
+								requiredMessage="É obrigatório selecionar um dia da semana">
+								<f:selectItem itemLabel="Selecione" itemValue="" />
+								<f:selectItem itemLabel="Segunda-feira"
+									itemValue="Segunda-feira" />
+								<f:selectItem itemLabel="Terça-feira" itemValue="Terça-feira" />
+								<f:selectItem itemLabel="Quarta-feira" itemValue="Quarta-feira" />
+								<f:selectItem itemLabel="Quinta-feira" itemValue="Quinta-feira" />
+								<f:selectItem itemLabel="Sexta-feira" itemValue="Sexta-feira" />
+								<f:selectItem itemLabel="Sábado" itemValue="Sábado" />
+								<f:selectItem itemLabel="Domingo" itemValue="Domingo" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="horaAtvNovo" value="Horário:" />
+							<p:calendar id="horaAtvNovo"
+								value="#{MBAtividade.atividade.hora}" mode="popup"
+								showOn="button" locale="pt" pattern="HH:mm" timeOnly="true"
+								required="true"
+								requiredMessage="É obrigatório selecionar um horário" />
+
+
+						</h:panelGrid>
+
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tabExercicios" title="Exercícios">
+					<p:panel header="Adicionar Exercícios">
+
+						<h:messages errorClass="error" />
+
+						<h:form id="frmExcAtiv">
+
+							<h:panelGrid columns="2" id="pnlExcAtiv">
+
+								<h:outputLabel value="Exercício" />
+								<p:selectOneMenu id="exercicioAtvNovo"
+									value="#{MBAtividade.exercicioAtividade.exercicio}"
+									filter="true" required="true"
+									requiredMessage="É obrigatório selecionar um exercício">
+									<f:selectItem itemValue="" itemLabel="Selecione um exercício" />
+									<f:selectItems value="#{MBAtividade.comboExercicios}"
+										var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+								</p:selectOneMenu>
+
+								<p:commandButton id="btnAdd" value="Adicionar"
+									process="@this exercicioAtvNovo"
+									actionListener="#{MBAtividade.adicionarExercicio}"
+									update="tblExerciciosAdd pnlExcAtiv :msgGlobal">
+									<p:resetInput target="pnlExcAtiv" />
+								</p:commandButton>
+							</h:panelGrid>
+
+							<p:dataTable id="tblExerciciosAdd"
+								value="#{MBAtividade.atividadeExercicios}"
+								var="exercicioAdicionado"
+								emptyMessage="Nenhum Exercício Adicionado">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nome do Exercício" />
+									</f:facet>
+									<h:outputText value="#{exercicioAdicionado.exercicio.nome}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Remover" />
+									</f:facet>
+									<p:commandButton icon="ui-icon-circle-close"
+										action="#{MBAtividade.removerExercicio(exercicioAdicionado)}"
+										update="tblExerciciosAdd :msgGlobal" process="@this">
+									</p:commandButton>
+
+								</p:column>
+							</p:dataTable>
+
+						</h:form>
+
+
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tabConfirmacao" title="Confirmação">
+					<p:panel header="Confirmação">
+
+						<h:messages errorClass="error" />
+
+						<h:panelGrid columns="2">
+
+							<h:outputLabel value="Nome do Supervisor: " />
+							<h:outputText
+								value="#{MBAtividade.atividade.supervisor.funcionario.nome}" />
+
+							<h:outputLabel value="Nome do Aluno: " />
+							<h:outputText value="#{MBAtividade.atividade.aluno.pessoa.nome}" />
+
+							<h:outputLabel value="Dia da Semana: " />
+							<h:outputText value="#{MBAtividade.atividade.diaDaSemana}" />
+
+							<h:outputLabel value="Horário: " />
+							<h:outputText value="#{MBAtividade.atividade.hora}">
+								<f:convertDateTime pattern="HH:mm" locale="pt" timeZone="GMT-3" />
+							</h:outputText>
+
+							<p:dataTable id="tblExerciciosConfirmar"
+								value="#{MBAtividade.atividade.atividadeExercicios}"
+								var="exercicioAdicionado"
+								emptyMessage="Nenhum Exercício Adicionado">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Nome do Exercício" />
+									</f:facet>
+									<h:outputText value="#{exercicioAdicionado.exercicio.nome}" />
+								</p:column>
+
+							</p:dataTable>
+
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<p:commandButton value="Gravar"
+								actionListener="#{MBAtividade.novo}"
+								oncomplete="tabelaAtividades.clearFilters(); wizardAtividade.loadStep(wizardAtividade.cfg.steps[0], true)"
+								update=":frmAtvListagem:tblAtividades :msgGlobal :frmWizard:wizAtividades" />
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+			</p:wizard>
+
+
+		</h:form>
+
+
+		<p:dialog widgetVar="dlgAtvExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Plano de Treino - Excluir">
+			<h:form id="frmAtvExcluir">
+				<p:panelGrid id="pnlAtvExcluir" columns="2">
+					<h:outputLabel
+						value="Deseja realmente excluir o plano de treino do aluno: " />
+					<h:outputText
+						value="#{MBAtividade.atividadeSelecionada.aluno.pessoa.nome}" />
+					<h:outputLabel value="Dia da Semana: " />
+					<h:outputText
+						value="#{MBAtividade.atividadeSelecionada.diaDaSemana}" />
+					<h:outputLabel value="Horário: " />
+					<h:outputText value="#{MBAtividade.atividadeSelecionada.hora}">
+						<f:convertDateTime pattern="HH:mm" locale="pt" timeZone="GMT-3" />
+					</h:outputText>
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBAtividade.excluir}"
+						oncomplete="PF('dlgAtvExcluir').hide(); tabelaAtividades.clearFilters();"
+						update=":frmAtvListagem:tblAtividades :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgAtvExcluir').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgAtvEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Plano de Treino - Editar">
+			<h:form id="frmAtvEditar">
+				<p:panelGrid id="pnlAtvEditar" columns="2">
+
+					<p:outputLabel value="Dia da Semana:" for="semanaAtvEditar" />
+					<p:selectOneMenu id="semanaAtvEditar"
+						value="#{MBAtividade.atividadeSelecionada.diaDaSemana}"
+						filter="true" required="true"
+						requiredMessage="É obrigatório selecionar um dia da semana">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="Segunda-feira" itemValue="Segunda-feira" />
+						<f:selectItem itemLabel="Terça-feira" itemValue="Terça-feira" />
+						<f:selectItem itemLabel="Quarta-feira" itemValue="Quarta-feira" />
+						<f:selectItem itemLabel="Quinta-feira" itemValue="Quinta-feira" />
+						<f:selectItem itemLabel="Sexta-feira" itemValue="Sexta-feira" />
+						<f:selectItem itemLabel="Sábado" itemValue="Sábado" />
+						<f:selectItem itemLabel="Domingo" itemValue="Domingo" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="horaAtvEditar" value="Horário:" />
+					<p:calendar id="horaAtvEditar"
+						value="#{MBAtividade.atividadeSelecionada.hora}" mode="popup"
+						showOn="button" locale="pt" pattern="HH:mm" timeOnly="true"
+						required="true"
+						requiredMessage="É obrigatório selecionar um horário" />
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBAtividade.editar}"
+						oncomplete="verificar(xhr, status, args, 'dlgAtvEditar', 'tabelaAtividades');"
+						update=":frmAtvListagem:tblAtividades :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgAtvEditar').hide();">
+						<p:resetInput target="pnlAtvEditar" />
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgAtvExercicios" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Planos de Treino - Exercícios">
+			<h:form id="frmAtvExercicios">
+				<p:panelGrid id="pnlAtvExercicios" columns="2">
+					<p:dataTable id="tblExercicios"
+						value="#{MBAtividade.atividadeSelecionada.atividadeExercicios}"
+						var="exercicio" emptyMessage="Nenhum Exercício Adicionado">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Nome do Exercício" />
+							</f:facet>
+							<h:outputText value="#{exercicio.exercicio.nome}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Ok"
+						onclick="PF('dlgAtvExercicios').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>
+
+<!-- @author Leticia Pereira Borges Alves <leticia_borges.alves@hotmail.com> -->

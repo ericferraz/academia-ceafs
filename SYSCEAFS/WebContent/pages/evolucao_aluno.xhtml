@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+
+		<h:form id="frmEvAluno">
+
+			<h:panelGrid columns="2" id="pnlEvAluno">
+				<p:outputLabel value="Aluno:" for="alunoEvAluno" />
+				<p:selectOneMenu id="alunoEvAluno" value="#{MBEvolucaoAluno.aluno}"
+					filter="true" required="true"
+					requiredMessage="É obrigatório selecionar um aluno">
+					<f:selectItem itemValue="" itemLabel="Selecione um aluno" />
+					<f:selectItems value="#{MBEvolucaoAluno.comboAlunos}" var="item"
+						itemValue="#{item}" itemLabel="#{item.pessoa.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Exercício:" for="alunoEvExercicio" />
+				<p:selectOneMenu id="alunoEvExercicio"
+					value="#{MBEvolucaoAluno.exercicio}" filter="true" required="true"
+					requiredMessage="É obrigatório selecionar um exercício">
+					<f:selectItem itemValue="" itemLabel="Selecione um exercício" />
+					<f:selectItems value="#{MBEvolucaoAluno.comboExercicios}"
+						var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+				</p:selectOneMenu>
+
+			</h:panelGrid>
+
+			<div class="ui-messages ui-widget">
+				<div class="ui-messages-info ui-corner-all">
+					<span class="ui-messages-info-icon"></span>
+					<ul>
+						<li><span class="ui-messages-info-summary">Atenção</span> <span
+							class="ui-messages-info-detail">Se o gráfico não carregar,
+								certifique se escolheu um que o aluno pratica!</span></li>
+					</ul>
+				</div>
+			</div>
+
+			<p:commandButton id="btnGerarGrafico" value="Gerar Gráfico"
+				action="#{MBEvolucaoAluno.createDateModel}" ajax="false">
+			</p:commandButton>
+			<br />
+			<br />
+			<br />
+
+			<p:lineChart id="grafico" value="#{MBEvolucaoAluno.model}"
+				legendPosition="e" style="width:900px !important;" minY="0" />
+
+		</h:form>
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>
+
+<!-- @author Leticia Pereira Borges Alves <leticia_borges.alves@hotmail.com> -->

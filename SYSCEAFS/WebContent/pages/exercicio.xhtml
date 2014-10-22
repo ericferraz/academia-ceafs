@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+
+	<ui:define name="conteudo">
+		<h:form id="frmExcListagem">
+			<p:dataTable id="tblExercicios" widgetVar="tabelaExercicios"
+				emptyMessage="Nenhum registro encontrado."
+				value="#{MBExercicio.itens}" var="item"
+				filteredValue="#{MBExercicio.itensFiltrados}" paginator="true"
+				rows="9">
+
+				<f:facet name="header">
+					Exercício - Listagem
+				</f:facet>
+
+				<p:column headerText="Nome" sortBy="#{item.nome}"
+					filterBy="#{item.nome}">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Equipamento" sortBy="#{item.equipamento.nome}"
+					filterBy="#{item.equipamento.nome}">
+					<h:outputText value="#{item.equipamento.nome}" />
+				</p:column>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgExcExcluir').show();"
+						update=":frmExcExcluir:pnlExcExcluir">
+						<f:setPropertyActionListener target="#{MBExercicio.exercicio}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						actionListener="#{MBExercicio.popularCombo}"
+						oncomplete="PF('dlgExcEditar').show();"
+						update=":frmExcEditar:pnlExcEditar">
+						<f:setPropertyActionListener target="#{MBExercicio.exercicio}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBExercicio.prepararNovo}"
+						update=":frmExcNovo:pnlExcNovo"
+						oncomplete="PF('dlgExcNovo').show();" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgExcNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Exercicio - Novo">
+			<h:form id="frmExcNovo">
+				<h:panelGrid id="pnlExcNovo" columns="2">
+					<p:outputLabel for="txtNomeExcNovo" value="Nome:" />
+					<p:inputText id="txtNomeExcNovo" size="30" maxlength="50"
+						value="#{MBExercicio.exercicio.nome}" required="true"
+						requiredMessage="O campo nome é obrigatório" />
+
+					<p:outputLabel value="Equipamento:" />
+					<p:selectOneMenu value="#{MBExercicio.exercicio.equipamento}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione um equipamento" />
+						<f:selectItems value="#{MBExercicio.comboEquipamentos}" var="item"
+							itemValue="#{item}" itemLabel="#{item.nome}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Gravar"
+						actionListener="#{MBExercicio.novo}"
+						oncomplete="verificar(xhr, status, args, 'dlgExcNovo', 'tabelaExercicios');"
+						update=":frmExcListagem:tblExercicios :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgExcNovo').hide();" >
+						<p:resetInput target="pnlExcNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgExcExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Exercicio - Excluir">
+			<h:form id="frmExcExcluir">
+				<p:panelGrid id="pnlExcExcluir" columns="2">
+					<h:outputLabel value="Deseja realmente excluir o exercício: " />
+					<h:outputText value="#{MBExercicio.exercicio.nome}" />
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBExercicio.excluir}"
+						oncomplete="PF('dlgExcExcluir').hide(); tabelaExercicios.clearFilters();"
+						update=":frmExcListagem:tblExercicios :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgExcExcluir').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgExcEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Exercicio - Editar">
+			<h:form id="frmExcEditar">
+				<p:panelGrid id="pnlExcEditar" columns="2">
+					<p:outputLabel for="txtNomeExcEditar" value="Nome:" />
+					<p:inputText id="txtNomeExcEditar" size="30" maxlength="50"
+						value="#{MBExercicio.exercicio.nome}" required="true"
+						requiredMessage="O campo nome é obrigatório" />
+
+					<p:outputLabel value="Equipamento:" />
+					<p:selectOneMenu value="#{MBExercicio.exercicio.equipamento}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione um equipamento" />
+						<f:selectItems value="#{MBExercicio.comboEquipamentos}" var="item"
+							itemValue="#{item}" itemLabel="#{item.nome}" />
+					</p:selectOneMenu>
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBExercicio.editar}"
+						oncomplete="verificar(xhr, status, args, 'dlgExcEditar', 'tabelaExercicios');"
+						update=":frmExcListagem:tblExercicios :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgExcEditar').hide();" >
+						<p:resetInput target="pnlExcEditar" />
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<f:metadata>
+		<o:viewParam name="id" value="#{MBAcompanhamento.acompanhamento}" />
+		<f:viewAction action="#{MBAcompanhamento.prepararNovo}" />
+	</f:metadata>
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="menu_principal">
+		<ui:include src="/includes/menuPrincipal.xhtml">
+		</ui:include>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmAcpListagem">
+
+			<p:dataTable id="tblAcompanhamentos"
+				widgetVar="tabelaAcompanhamentos"
+				emptyMessage="Nenhum registro encontrado."
+				value="#{MBAcompanhamento.itens}" var="item"
+				filteredValue="#{MBAcompanhamento.itensFiltrados}" paginator="true"
+				rows="4">
+
+				<f:facet name="header">
+					Acompanhamento Médico - Listagem
+				</f:facet>
+
+				<p:column headerText="Nome do Aluno"
+					sortBy="#{item.aluno.pessoa.nome}"
+					filterBy="#{item.aluno.pessoa.nome}">
+					<h:outputText value="#{item.aluno.pessoa.nome}" />
+				</p:column>
+
+				<p:column headerText="Data do Preenchimento"
+					sortBy="#{item.dataPreenchimento}">
+					<h:outputText value="#{item.dataPreenchimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgAcpExcluir').show();"
+						update=":frmAcpExcluir:pnlAcpExcluir">
+						<f:setPropertyActionListener
+							target="#{MBAcompanhamento.acompanhamentoSelecionado}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgAcpEditar').show();"
+						update=":frmAcpEditar:pnlAcpEditar :frmAcpEditar:tblPatologiasEditar">
+						<f:setPropertyActionListener
+							target="#{MBAcompanhamento.acompanhamentoSelecionado}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+		<br />
+		<br />
+		<p:outputLabel value="Cadastrar Acompanhamento Médico"
+			style="font-weight: bold; font-size: larger !important;" />
+		<br />
+		<br />
+
+		<h:form id="frmWizard">
+
+			<p:wizard id="wizAcompanhamentos"
+				flowListener="#{MBAcompanhamento.onFlowProcess}" nextLabel="Avançar"
+				backLabel="Voltar" widgetVar="wizardAcompanhamento">
+				<p:tab id="tabAcompanhamento" title="Acompanhamento">
+					<p:panel header="Acompanhamento Médico">
+
+						<div class="ui-messages ui-widget">
+							<div class="ui-messages-info ui-corner-all">
+								<span class="ui-messages-info-icon"></span>
+								<ul>
+									<li><span class="ui-messages-info-summary">Recomenda-se</span>
+										<span class="ui-messages-info-detail">Cadastrar um
+											Acompanhamento Médico por Aluno, a não ser que mais
+											patologias devam ser acompanhadas!</span></li>
+								</ul>
+							</div>
+						</div>
+
+						<h:messages errorClass="error" />
+
+						<h:panelGrid id="pnlAcpNovo" columns="4">
+
+							<p:outputLabel for="dtPreenchimentoAcpNovo"
+								value="Data do Preenchimento:" />
+							<p:calendar id="dtPreenchimentoAcpNovo"
+								value="#{MBAcompanhamento.acompanhamento.dataPreenchimento}"
+								mode="popup" showOn="button" required="true"
+								requiredMessage="O campo data de preenchimento é obrigatório"
+								locale="pt" />
+
+							<p:outputLabel for="dtExameAcpNovo"
+								value="Data do Último Exame Médico:" />
+							<p:calendar id="dtExameAcpNovo"
+								value="#{MBAcompanhamento.acompanhamento.dataUltimoExame}"
+								mode="popup" showOn="button" locale="pt" />
+
+							<p:outputLabel value="Aluno:" for="alunoAcpNovo" />
+							<p:selectOneMenu id="alunoAcpNovo"
+								value="#{MBAcompanhamento.acompanhamento.aluno}" filter="true"
+								required="true"
+								requiredMessage="É obrigatório selecionar um aluno">
+								<f:selectItem itemValue="" itemLabel="Selecione um aluno" />
+								<f:selectItems value="#{MBAcompanhamento.comboAlunos}"
+									var="item" itemValue="#{item}" itemLabel="#{item.pessoa.nome}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tabPatologias" title="Patologias">
+					<p:panel header="Adicionar Patologias">
+
+						<h:messages errorClass="error" />
+
+						<h:form id="frmPatAcomp">
+
+							<h:panelGrid columns="2" id="pnlPatAcomp">
+
+								<h:outputLabel value="Patologia:" />
+								<p:selectOneMenu id="patologiaAcpNovo"
+									value="#{MBAcompanhamento.patologiaAcompanhada.patologia}"
+									filter="true" required="true"
+									requiredMessage="É obrigatório selecionar uma patologia">
+									<f:selectItem itemValue="" itemLabel="Selecione um patologia" />
+									<f:selectItems value="#{MBAcompanhamento.comboPatologias}"
+										var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+								</p:selectOneMenu>
+
+								<h:outputLabel value="Especificações:" />
+								<p:inputText id="txtPatEspecificacoes"
+									value="#{MBAcompanhamento.patologiaAcompanhada.especificacoes}" />
+
+								<h:outputLabel value="Situação" />
+								<p:selectOneMenu id="patSituacao"
+									value="#{MBAcompanhamento.patologiaAcompanhada.situacao}">
+									<f:selectItem itemLabel="Selecione" itemValue="" />
+									<f:selectItem itemLabel="Existente" itemValue="Existente" />
+									<f:selectItem itemLabel="Superada" itemValue="Superada" />
+								</p:selectOneMenu>
+
+								<p:commandButton value="Limpar" type="reset" />
+								<p:commandButton id="btnAdd" value="Adicionar"
+									process="@this patologiaAcpNovo txtPatEspecificacoes patSituacao"
+									actionListener="#{MBAcompanhamento.adicionarPatologia}"
+									update="tblPatologiasAdd pnlPatAcomp :msgGlobal">
+									<p:resetInput target="pnlPatAcomp" />
+								</p:commandButton>
+							</h:panelGrid>
+
+							<p:dataTable id="tblPatologiasAdd"
+								value="#{MBAcompanhamento.acompanhamentoPatologias}"
+								var="patologia" emptyMessage="Nenhuma Patologia Adicionada">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Patologia" />
+									</f:facet>
+									<h:outputText value="#{patologia.patologia.nome}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Especificações" />
+									</f:facet>
+									<h:outputText value="#{patologia.especificacoes}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Situação" />
+									</f:facet>
+									<h:outputText value="#{patologia.situacao}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Remover" />
+									</f:facet>
+									<p:commandButton icon="ui-icon-circle-close"
+										action="#{MBAcompanhamento.removerPatologia(patologia)}"
+										update="tblPatologiasAdd :msgGlobal" process="@this">
+									</p:commandButton>
+
+								</p:column>
+							</p:dataTable>
+
+						</h:form>
+
+
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tabConfirmacao" title="Confirmação">
+					<p:panel header="Confirmação">
+
+						<h:messages errorClass="error" />
+
+						<h:panelGrid columns="2">
+
+							<h:outputLabel value="Data do Preenchimento: " />
+							<h:outputText
+								value="#{MBAcompanhamento.acompanhamento.dataPreenchimento}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+
+							<h:outputLabel value="Data do Último Exame Médico: " />
+							<h:outputText
+								value="#{MBAcompanhamento.acompanhamento.dataUltimoExame}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+
+							<h:outputLabel value="Nome do Aluno: " />
+							<h:outputText
+								value="#{MBAcompanhamento.acompanhamento.aluno.pessoa.nome}" />
+
+							<p:dataTable id="tblPatologiasConfirmar"
+								value="#{MBAcompanhamento.acompanhamento.acompanhamentoPatologias}"
+								var="patologia" emptyMessage="Nenhuma Patologia Adicionada">
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Patologia" />
+									</f:facet>
+									<h:outputText value="#{patologia.patologia.nome}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Especificações" />
+									</f:facet>
+									<h:outputText value="#{patologia.especificacoes}" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="Situação" />
+									</f:facet>
+									<h:outputText value="#{patologia.situacao}" />
+								</p:column>
+							</p:dataTable>
+
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<p:commandButton value="Gravar"
+								actionListener="#{MBAcompanhamento.novo}"
+								oncomplete="tabelaAcompanhamentos.clearFilters(); wizardAcompanhamento.loadStep(wizardAcompanhamento.cfg.steps[0], true)"
+								update=":frmAcpListagem:tblAcompanhamentos :msgGlobal :frmWizard:wizAcompanhamentos" />
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+			</p:wizard>
+
+
+		</h:form>
+
+
+		<p:dialog widgetVar="dlgAcpExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Acompanhamento Médico - Excluir">
+			<h:form id="frmAcpExcluir">
+				<p:panelGrid id="pnlAcpExcluir" columns="2">
+					<h:outputLabel
+						value="Deseja realmente excluir o acompanhamento do aluno: " />
+					<h:outputText
+						value="#{MBAcompanhamento.acompanhamentoSelecionado.aluno.pessoa.nome}" />
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBAcompanhamento.excluir}"
+						oncomplete="PF('dlgAcpExcluir').hide(); tabelaAcompanhamentos.clearFilters();"
+						update=":frmAcpListagem:tblAcompanhamentos :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgAcpExcluir').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgAcpEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Acompanhamento Médico - Editar">
+			<h:form id="frmAcpEditar">
+				<p:panelGrid id="pnlAcpEditar" columns="2">
+
+					<p:outputLabel for="dtExameAcpNovo"
+						value="Data do Último Exame Médico:" />
+					<p:calendar id="dtExameAcpNovo"
+						value="#{MBAcompanhamento.acompanhamentoSelecionado.dataUltimoExame}"
+						mode="popup" showOn="button" locale="pt" />
+
+					<p:dataTable id="tblPatologiasEditar"
+						value="#{MBAcompanhamento.acompanhamentoSelecionado.acompanhamentoPatologias}"
+						var="patologia" emptyMessage="Nenhuma Patologia Adicionada">
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Patologia" />
+							</f:facet>
+							<h:outputText value="#{patologia.patologia.nome}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Especificações" />
+							</f:facet>
+							<h:outputText value="#{patologia.especificacoes}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Situação" />
+							</f:facet>
+							<p:selectOneMenu id="patSituacao" value="#{patologia.situacao}">
+								<f:selectItem itemLabel="Selecione" itemValue="" />
+								<f:selectItem itemLabel="Existente" itemValue="Existente" />
+								<f:selectItem itemLabel="Superada" itemValue="Superada" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:dataTable>
+
+				</p:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBAcompanhamento.editar}"
+						oncomplete="verificar(xhr, status, args, 'dlgAcpEditar', 'tabelaAcompanhamentos');"
+						update=":frmAcpListagem:tblAcompanhamentos :msgGlobal" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgAcpEditar').hide();">
+						<p:resetInput target="pnlAcpEditar" />
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+	<ui:define name="menu_auxiliar">
+		<ui:include src="/includes/menuAuxiliar.xhtml">
+		</ui:include>
+	</ui:define>
+
+</ui:composition>
+
+<!-- @author Leticia Pereira Borges Alves <leticia_borges.alves@hotmail.com> -->
