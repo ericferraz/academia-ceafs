@@ -2,6 +2,7 @@ academia-ceafs
 ==============
 
 Meu primeiro sistema em Java Web. Muito a melhorar...
+
 Utiliza JPA, GenericDAO, JSF 2 e Primefaces 4
 
 Essa Academia é especializada em Atividade Física Supervisionada, portanto o acompanhamento da saúde do aluno é mais rigoroso.
